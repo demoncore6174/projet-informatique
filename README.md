@@ -9,72 +9,96 @@ Voici les pistes envisagées pour notre réalisation :
 
 ---
 
-## Analyse Fonctionnelle : Le Jeu du Simon
+---
+# Analyse Fonctionnelle : Projet Simon 
+ 
+**Membres du groupe :**
 
-### 1. Présentation Générale
-* **Objectif du projet :** Concevoir une version interactive et connectée du jeu de mémoire "Simon" sur Raspberry Pi. Le système génère une séquence lumineuse et sonore que le joueur doit reproduire à l'aide de boutons physiques. Les scores sont enregistrés en base de données et consultables en temps réel sur une interface web.
+BLERIOT Pierre 21608749
 
-### 2. fonctionnement entre le joueur et le projet
-le joueur peut interagir avec le raspberry py. Il va observer une séquence de couleurs qu'il devra reproduire à l'aide de 4 boutons. Plus, il réussit, plus un score augmente et la difficulté de même. Hors des parties, le joueur pourra observer sur un site son classement par rapport aux autres.
+VENTURA Maël 21602758
 
-### 3. Spécifications Fonctionnelles
+MOVSISYAN Davit 21605413
 
-#### A. Partie Matérielle (Raspberry Pi & Kit Grove)
-* **Entrées (Capteurs) :** 4 boutons poussoirs (Grove - Button) pour saisir la séquence.
-* **Sorties (Actionneurs) :** 
-  * 4 LEDs de couleurs (ou un écran LCD RGB) pour afficher la séquence à mémoriser.
-  * Un Buzzer (Grove - Buzzer) pour émettre un son distinct par couleur ( pour rendre unique chaque couleur)
-* **Logique de jeu :** Le script Python gère la génération aléatoire des séquences, l'écoute des entrées, la vérification de la réponse et l'augmentation progressive de la difficulté.
+**Projet :** Version interactive du jeu de mémoire "Simon" sur Raspberry Pi.
 
-#### B. Partie Base de Données
-* **Enregistrement :** Stockage automatique après chaque partie de :
-  * Le pseudo du joueur.
-  * Le score (nombre d'étapes réussies).
-  * La date et l'heure de la partie.
+---
 
-#### C. Partie Web & FastAPI
-* **Tableau de bord (Dashboard) :** Hébergé via **FastAPI**, permettant d'afficher :
-  * Le classement général des meilleurs scores.
-  * Les statistiques globales des parties jouées.
+## 1. Introduction : Description générale du projet
 
- ---
-## Analyse Fonctionnelle : La Station Météo Intelligente
+### Contexte et Objectif:
+Le projet a pour objectif de reproduire le jeu de mémoire **Simon**. dont le joueur doit mémoriser et reproduire des séquences de couleurs qui vont devenir de plus en plus difficiles au fil de la partie
 
-### 1. Présentation Générale
 
-* **Objectif du projet :** Concevoir une station météo connectée et autonome sur Raspberry Pi. Le système mesure en continu les grandeurs environnementales (température, humidité, pression atmosphérique, luminosité) à l'aide de capteurs Grove, analyse les tendances pour prédire les changements de temps, enregistre l'historique dans une base de données et permet de consulter les données et alertes en temps réel sur une interface web.
+---
 
-### 2. Fonctionnement entre l'utilisateur et le projet
+## 2. Schéma général du projet
 
-Le utilisateur peut interagir avec le système de deux manières :
-* **En local :** Il observe les conditions actuelles affichées directement sur un écran LCD RGB relié au Raspberry Pi, qui change de couleur selon le niveau de confort ou d'alerte (ex. bleu si froid, rouge si canicule/alerte).
-* **À distance via le web :** Il se connecte au tableau de bord en ligne pour analyser l'historique des relevés sous forme de graphiques, suivre les tendances de pression (pour anticiper la pluie) et consulter des statistiques globales.
+Le projet se construit autour d'un micro-ordinateur Raspberry Pi qui fait office de cœur central.
 
-### 3. Spécifications Fonctionnelles
+* **Composants matériels (Raspberry Pi & Kit Grove) :**
+  * **Entrées :** 
 
-#### A. Partie Matérielle (Raspberry Pi & Kit Grove)
+    -4 boutons poussoirs (pour les 4 couleurs/séquences).
+  * **Sorties (Actionneurs) :** 
+  
+    -4 LEDs de couleurs pour afficher la séquence.
+    
+    -un Buzzer pour associer un son unique à chaque couleur.
 
-* **Entrées (Capteurs) :**
-  * Un capteur de température et d'humidité (Grove - Temperature Sensor / DHT) pour la météo ambiante.
-  * Un baromètre de haute précision (Grove - Barometer High-Accuracy) pour mesurer la pression atmosphérique et détecter les variations météo (loi des théodolites / tendance de Torricelli).
-  * Un capteur de luminosité (Grove - Light Sensor) pour mesurer l'ensoleillement.
-* **Sorties (Actionneurs) :**
-  * Un écran LCD RGB (Grove - LCD RGB Backlight) pour afficher les messages, la température et l'état de l'air.
-  * Un Buzzer (Grove - Buzzer) pour émettre un signal sonore en cas d'alerte météo critique (ex. chute brutale de pression ou température anormale).
-* **Logique de script :** Un script Python s'exécute en arrière-plan pour interroger périodiquement les capteurs, stocker les données, piloter l'affichage LCD et évaluer des seuils d'alerte.
+    -un écran RGB afin d'afficher des informations à l'utilisateur
+* **Flux de données & Interaction :**
+  * Le script Python (exécuté sur le Raspberry Pi) gère la logique du jeu, lit les boutons, pilote les actionneurs et assure le bon déroulement du jeu et de sa difficulté.
+  * Les données de score de chaque partie jouée sont transmises et enregistrées dans une base de données.
+  * Une page web communique avec la base de données pour afficher le classement en temps réel sur le web, accessible depuis n'importe quel appareil (ordinateur, smartphone).
+---
+```
+  [ Joueur ] <---> [ 4 Boutons (Entrées) ]
+      ^                  |
+      |                  v          
+[ LED, Buzzer et écran ] <-- [ Raspberry Pi ] ---> [ Base de Données ]
+                                                           |
+                                                           v 
+                                            [ Site Web (Scores) ]
+```
 
-#### B. Partie Base de Données
 
-* **Enregistrement :** Stockage périodique (toutes les X minutes) des données environnementales comprenant :
-  * La température et l'humidité mesurées.
-  * La pression atmosphérique.
-  * Le niveau de luminosité.
-  * La date et l'heure exactes de la mesure (horodatage).
+Le raspberry Pi interagit avec le joueur à travers les LED, le buzzer et l'éran. Le joueur, à travers les boutons peut aussi interagir avec le raspberry Pi qui avec son script pthon va déterminer si la partie  est terminée. Dans ce cas, il va transmettre de nouvelles données dans la base de données qui seront utilisées afin d'afficher un classement des scores.
+---
 
-#### C. Partie Web & FastAPI
+## 3. Scénarios d'usages
 
-* **Tableau de bord (Dashboard) :** Hébergé via **FastAPI**, permettant d'afficher :
-  * Les graphiques d'évolution des grandeurs météo en temps réel.
-  * Les prévisions simples basées sur la variation de la pression atmosphérique (ex. « Pluie probable », « Temps stable »).
-  * Les statistiques globales (température min/max de la journée, pics de luminosité).
+* **Scénario 1 : Lancement et déroulement d'une partie par le joueur**
+  Le joueur s'installe devant le projet et lance le script de jeu. Le Raspberry Pi génère une séquence aléatoire de couleurs avec des sons associés à chaque couleur. Le joueur observe, puis appuie sur les boutons correspondants. Si la séquence est correcte, un niveau supplémentaire s'ajoute et la difficulté augmente. En cas d'erreur, la partie s'arrête et le score final est affiché et sauvegardé.
 
+* **Scénario 2 : Enregistrement automatique du score**
+  À la fin de la partie (qu'elle soit gagnée ou perdue), le script Python récupère le pseudo ( ou une série d chiffres) du joueur ainsi que son score et les insère automatiquement dans la base de données avec la date exacte.
+
+* **Scénario 3 : Consultation du classement en ligne**
+  Un utilisateur (joueur ou visiteur) se rend sur le site web du projet. Depuis la page, il peut consulter en temps réel le classement général des meilleurs scores ainsi que les statistiques globales des parties jouées.
+
+---
+
+## 4. Fonctionnalités principales et secondaires
+
+
+| $n^\circ$ | Nom | Description | Sur quoi la fonction agit | Importance |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | Générer la séquence | Le script Python génère ou allonge la séquence aléatoire de jeu | Raspberry Pi, LEDs, Buzzer | **1** |
+| **2** | Lire les entrées joueur | Le Raspberry Pi détecte les appuis sur les 4 boutons poussoirs | Boutons, Raspberry Pi | **1** |
+| **3** | Valider la séquence | Le programme compare la saisie du joueur avec la séquence attendue | Raspberry Pi, script python, écran | **1** |
+| **4** | Enregistrer le score | Stockage automatique du score et du pseudo en fin de partie | Raspberry Pi, Base de données | **2** |
+| **5** | Afficher le tableau des scores | Le site web récupère et affiche le classement des meilleurs joueurs | Base de données, Site web | **2** |
+| **6** | Saisir son pseudo | Le joueur entre son nom ou un nombre avant ou après la partie pour enregistrer son score | écran, Raspberry Pi | **3** |
+
+---
+
+## 5. Planning prévisionnel
+
+Répartition indicative des tâches sur les 6 semaines du projet :
+
+| Membres du groupe | Semaine 1 | Semaine 2 | Semaine 3 | Semaine 4 | Semaine 5 | Semaine 6 |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **VENTURA Maël** (Matériel & Logique Python) |Branchement et configuration des composants  |Développement du script Python principal  |----------|connexion avec python et la base de données|test du jeu dans son intégralité |finitions possibles et bugs |
+| **BLERIOT Pierre** (site web)  | conception du site |--- | connexion à la base de données | --- | test | finitions possibles et bugs |
+| **MOVSISYAN Davit** ( base de données)  |  conception de la base de données|--- |intégration des scores et connexion au site |  connexion avec le code python | test | finitions possibles et bugs|
